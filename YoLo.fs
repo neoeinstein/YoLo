@@ -6,17 +6,25 @@ module internal YoLo
 open System
 open System.Threading.Tasks
 
-let curry f a b = f (a, b)
+let inline always a = fun _ -> a
 
-let uncurry f (a, b) = f a b
+let inline thunk f = f ()
 
-let flip f a b = f b a
+let inline curry f a b = f (a, b)
+
+let inline uncurry f (a, b) = f a b
+
+let inline flip f a b = f b a
+
+let inline pair x y = (x, y)
 
 module Choice =
 
-  let create v = Choice1Of2 v
+  let inline create v = Choice1Of2 v
 
-  let createSnd v = Choice2Of2 v
+  let inline createSnd v = Choice2Of2 v
+
+  let chosen (Choice1Of2 x|Choice2Of2 x) = x
 
   let map f = function
     | Choice1Of2 v -> Choice1Of2 (f v)
@@ -25,6 +33,14 @@ module Choice =
   let mapSnd f = function
     | Choice1Of2 v -> Choice1Of2 v
     | Choice2Of2 v -> Choice2Of2 (f v)
+
+  let bimap f1 f2 = function
+    | Choice1Of2 v -> f1 v |> Choice1Of2
+    | Choice2Of2 v -> f2 v |> Choice2Of2
+
+  let dimap f1 f2 = function
+    | Choice1Of2 v -> f1 v
+    | Choice2Of2 v -> f2 v
 
   let bind (f : 'a -> Choice<'b, 'c>) (v : Choice<'a, 'c>) =
     match v with
@@ -119,11 +135,11 @@ module Choice =
 
 module Option =
 
-  let create x = Some x
+  let inline create x = Some x
 
   let apply (f : ('a -> 'b) option) (v : 'a option) =
     Option.bind (fun f' ->
-      Option.bind (fun v' ->
+      Option.map (fun v' ->
         create (f' v')) v) f
 
   let lift2 f v1 v2 =
@@ -165,6 +181,10 @@ module Option =
   let inject f = function
     | Some x -> f x; Some x
     | None   -> None
+
+  let ofTry = function
+    | true, x -> Some x
+    | false, _ -> None
 
   module Operators =
 
@@ -641,3 +661,9 @@ module App =
       use reader = new StreamReader(stream)
       reader.ReadToEnd ()
       |> Choice1Of2
+
+[<System.Obsolete("Fix this! It is meant to be temporary and will fail at runtime!")>]
+let undef<'a> = Unchecked.defaultof<'a>
+
+[<System.Obsolete("Fix this! It is meant to be temporary and will fail at runtime!")>]
+let bottom<'a> = failwith "Hit bottom"
