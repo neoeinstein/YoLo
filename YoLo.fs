@@ -669,4 +669,4 @@ module App =
 let undef<'a> = Unchecked.defaultof<'a>
 
 [<System.Obsolete("Fix this! It is meant to be temporary and will fail at runtime!")>]
-let bottom<'a> = failwith "Hit bottom"
+let bottom<'a> = fun () -> failwith "Hit bottom"
