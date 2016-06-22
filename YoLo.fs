@@ -18,6 +18,9 @@ let inline flip f a b = f b a
 
 let inline pair x y = (x, y)
 
+let (|Eq|_|) l r =
+  if l = r then Some () else None
+
 module Choice =
 
   let inline create v = Choice1Of2 v
