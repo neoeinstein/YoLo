@@ -142,7 +142,7 @@ module Option =
 
   let apply (f : ('a -> 'b) option) (v : 'a option) =
     Option.bind (fun f' ->
-      Option.map (fun v' ->
+      Option.bind (fun v' ->
         create (f' v')) v) f
 
   let lift2 f v1 v2 =
