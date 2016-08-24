@@ -21,6 +21,8 @@ let inline pair x y = (x, y)
 let (|Eq|_|) l r =
   if l = r then Some () else None
 
+let inline (^) x = x
+
 module Choice =
 
   let inline create v = Choice1Of2 v
@@ -667,6 +669,3 @@ module App =
 
 [<System.Obsolete("Fix this! It is meant to be temporary and will fail at runtime!")>]
 let undef<'a> = Unchecked.defaultof<'a>
-
-[<System.Obsolete("Fix this! It is meant to be temporary and will fail at runtime!")>]
-let bottom<'a> = fun () -> failwith "Hit bottom"
